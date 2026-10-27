@@ -77,9 +77,9 @@ export default function OverviewPage() {
         <h2 className="text-xl font-bold text-white mb-4">Hiệu suất hệ thống</h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {[
-            { name: 'Node 1 — Health', sensors: 'SpO₂ · Nhịp tim', health: 92, data: dataHealth },
-            { name: 'Node 2 — Environment', sensors: 'Nhiệt độ · Độ ẩm · Có người', health: 94, data: dataEnv },
-            { name: 'Node 3 — Air Quality', sensors: 'Khí Gas', health: 88, data: dataAir },
+            { name: 'Node 1 — Sức khỏe', sensors: 'SpO₂ · Nhịp tim', health: 92, data: [{ name: 'Sức khỏe', value: 92, fill: '#22d3ee' }] },
+            { name: 'Node 2 — Môi trường', sensors: 'Nhiệt độ · Độ ẩm · Có người', health: 94, data: [{ name: 'Sức khỏe', value: 94, fill: '#34d399' }] },
+            { name: 'Node 3 — Chất lượng không khí', sensors: 'Khí Gas', health: 88, data: [{ name: 'Sức khỏe', value: 88, fill: '#fbbf24' }] },
           ].map((node, idx) => (
             <div key={idx} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg shadow-slate-950/40">
               <div className="flex items-center justify-between mb-4">
@@ -93,17 +93,22 @@ export default function OverviewPage() {
                   ))}
                 </div>
               </div>
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-4xl font-extrabold text-white">{node.health}%</p>
-                  <p className="text-xs text-slate-400 mt-1">Sức khỏe</p>
+              <div className="flex items-end justify-between gap-6">
+                <div className="flex-1">
+                  <p className="text-5xl font-extrabold text-white tracking-tighter leading-none">{node.health}%</p>
+                  <p className="text-xs text-slate-400 mt-2 font-medium">Sức khỏe</p>
                 </div>
-                <div className="w-24 h-24">
+                <div className="relative w-28 h-28 flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadialBarChart innerRadius="70%" outerRadius="100%" data={node.data} startAngle={180} endAngle={-180}>
-                      <RadialBar background dataKey="value" cornerRadius={10} />
+                    <RadialBarChart innerRadius="55%" outerRadius="95%" data={node.data} startAngle={180} endAngle={-180}>
+                      <RadialBar background={{ fill: '#0f172a' }} dataKey="value" cornerRadius={12} barSize={18}>
+                        <Cell fill={node.data[0].fill} />
+                      </RadialBar>
                     </RadialBarChart>
                   </ResponsiveContainer>
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span className="text-xl font-extrabold text-white drop-shadow-md">{node.health}%</span>
+                  </div>
                 </div>
               </div>
             </div>
