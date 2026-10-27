@@ -94,20 +94,30 @@ export default function OverviewPage() {
                 </div>
               </div>
               <div className="flex items-end justify-between gap-6">
-                <div className="flex-1">
-                  <p className="text-5xl font-extrabold text-white tracking-tighter leading-none">{node.health}%</p>
-                  <p className="text-xs text-slate-400 mt-2 font-medium">Sức khỏe</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-white whitespace-nowrap">{node.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1">{node.sensors}</p>
+                  <div className="flex items-center gap-3 mt-3">
+                    <span className="text-xs text-slate-300">2 Cảm biến</span>
+                    <div className="flex gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span className="text-xs text-slate-400">Bình thường</span>
+                    </div>
+                    <div className="flex gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-400" />
+                      <span className="text-xs text-slate-400">Cảnh báo</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="relative w-28 h-28 flex items-center justify-center">
+                <div className="relative w-28 h-28 shrink-0 flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadialBarChart innerRadius="55%" outerRadius="95%" data={node.data} startAngle={180} endAngle={-180}>
-                      <RadialBar background={{ fill: '#0f172a' }} dataKey="value" cornerRadius={12} barSize={18}>
-                        <Cell fill={node.data[0].fill} />
-                      </RadialBar>
+                      <RadialBar background={{ fill: '#1e293b' }} dataKey="value" cornerRadius={10} barSize={8} />
                     </RadialBarChart>
                   </ResponsiveContainer>
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="text-xl font-extrabold text-white drop-shadow-md">{node.health}%</span>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-2xl font-extrabold text-white drop-shadow-lg">{node.health}%</span>
+                    <span className="text-[10px] text-slate-400 font-medium tracking-wide">Sức khỏe</span>
                   </div>
                 </div>
               </div>
