@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Wifi, Download, Plus, Monitor, Thermometer, Flame, Signal, BatteryMedium } from 'lucide-react';
-import { RadialBarChart, RadialBar, ResponsiveContainer, Cell } from 'recharts';
+import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis } from 'recharts';
 
 const dataHealth = [{ name: 'Sức khỏe', value: 92, fill: '#22d3ee' }];
 const dataEnv = [{ name: 'Môi trường', value: 94, fill: '#34d399' }];
@@ -77,47 +77,43 @@ export default function OverviewPage() {
         <h2 className="text-xl font-bold text-white mb-4">Hiệu suất hệ thống</h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {[
-            { name: 'Node 1 — Sức khỏe', sensors: 'SpO₂ · Nhịp tim', health: 92, data: [{ name: 'Sức khỏe', value: 92, fill: '#22d3ee' }] },
-            { name: 'Node 2 — Môi trường', sensors: 'Nhiệt độ · Độ ẩm · Có người', health: 94, data: [{ name: 'Sức khỏe', value: 94, fill: '#34d399' }] },
-            { name: 'Node 3 — Chất lượng không khí', sensors: 'Khí Gas', health: 88, data: [{ name: 'Sức khỏe', value: 88, fill: '#fbbf24' }] },
+            { name: 'Node 1 — Sức khỏe', desc: 'SpO₂ · Nhịp tim', health: 92, color: '#22d3ee', dots: [true, true, false] },
+            { name: 'Node 2 — Môi trường', desc: 'Nhiệt độ · Độ ẩm · Có người', health: 94, color: '#34d399', dots: [true, true, false] },
+            { name: 'Node 3 — Chất lượng không khí', desc: 'Khí Gas', health: 88, color: '#fbbf24', dots: [true, false, false] },
           ].map((node, idx) => (
-            <div key={idx} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg shadow-slate-950/40">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white">{node.name}</h3>
-                  <p className="text-xs text-slate-400">{node.sensors}</p>
+            <div key={idx} className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg shadow-slate-950/40">
+              <div className="flex justify-between items-start mb-4">
+                <div className="min-w-0">
+                  <h3 className="text-white font-bold text-lg whitespace-nowrap truncate">{node.name}</h3>
+                  <p className="text-slate-400 text-sm mt-0.5">{node.desc}</p>
                 </div>
-                <div className="flex gap-1.5">
-                  {[...Array(3)].map((_, j) => (
-                    <span key={j} className={`w-2 h-2 rounded-full ${j < 2 ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                <div className="flex gap-1 shrink-0 ml-2">
+                  {node.dots.map((on, j) => (
+                    <span key={j} className={`w-2 h-2 rounded-full ${on ? 'bg-emerald-400' : 'bg-amber-400'}`} />
                   ))}
                 </div>
               </div>
-              <div className="flex items-end justify-between gap-6">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-bold text-white whitespace-nowrap">{node.name}</h3>
-                  <p className="text-xs text-slate-400 mt-1">{node.sensors}</p>
-                  <div className="flex items-center gap-3 mt-3">
-                    <span className="text-xs text-slate-300">2 Cảm biến</span>
-                    <div className="flex gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                      <span className="text-xs text-slate-400">Bình thường</span>
-                    </div>
-                    <div className="flex gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-amber-400" />
-                      <span className="text-xs text-slate-400">Cảnh báo</span>
-                    </div>
+              <div className="flex justify-between items-end mt-6">
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-white font-bold text-3xl">2</span>
+                    <span className="text-slate-400 text-sm">Cảm biến</span>
+                  </div>
+                  <div className="flex flex-col gap-1 mt-2 text-xs text-slate-300">
+                    <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /><span>Bình thường</span></div>
+                    <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-400" /><span>Cảnh báo</span></div>
                   </div>
                 </div>
-                <div className="relative w-28 h-28 shrink-0 flex items-center justify-center">
+                <div className="w-[85px] h-[85px] shrink-0 relative flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadialBarChart innerRadius="55%" outerRadius="95%" data={node.data} startAngle={180} endAngle={-180}>
-                      <RadialBar background={{ fill: '#1e293b' }} dataKey="value" cornerRadius={10} barSize={8} />
+                    <RadialBarChart innerRadius="75%" outerRadius="100%" cx="50%" cy="50%" data={[{ value: node.health, fill: node.color }]} startAngle={180} endAngle={-180}>
+                      <RadialBar dataKey="value" cornerRadius={10} barSize={8} background={{ fill: '#1e293b' }} />
+                      <PolarAngleAxis type="number" domain={[0, 100]} tick={false} axisLine={false} />
                     </RadialBarChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-2xl font-extrabold text-white drop-shadow-lg">{node.health}%</span>
-                    <span className="text-[10px] text-slate-400 font-medium tracking-wide">Sức khỏe</span>
+                    <span className="text-white font-extrabold text-xl">{node.health}%</span>
+                    <span className="text-[10px] text-slate-400">Sức khỏe</span>
                   </div>
                 </div>
               </div>
